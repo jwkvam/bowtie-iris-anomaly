@@ -97,10 +97,7 @@ def baseviz2(algo, normalize, neighbors, species, perplex):
 
     chart = pw.Chart()
     for i, (x, y) in enumerate(reduced):
-        if i == nth:
-            chart += pw.scatter(x, y, markersize=msize[i], color='red')
-        else:
-            chart += pw.scatter(x, y, markersize=msize[i], color='blue', opacity=0.5)
+        chart += pw.scatter(x, y, markersize=msize[i], color='blue', opacity=0.5)
         anomplot.progress.do_inc(1)
     chart.legend(False)
     chart.layout['hovermode'] = 'closest'
