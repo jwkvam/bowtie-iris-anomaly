@@ -93,12 +93,12 @@ def index():
 
 
 
-@socketio.on('11#hover')
+@socketio.on('9#hover')
 def _(*args):
     def wrapuser():
         uniq_events = set()
-        uniq_events.update([('11#hover', 'attrplot', 'get')])
-        uniq_events.remove(('11#hover', 'attrplot', 'get'))
+        uniq_events.update([('9#hover', 'anomplot', 'get')])
+        uniq_events.remove(('9#hover', 'anomplot', 'get'))
         event_data = {}
         for ev in uniq_events:
             comp = getattr(example, ev[1])
@@ -109,13 +109,13 @@ def _(*args):
             getter = getattr(comp, ev[2])
             event_data[ev[0]] = getter()
 
-        event_data['11#hover'] = example.attrplot._get(
+        event_data['9#hover'] = example.anomplot._get(
             msgpack.unpackb(bytes(args[0]['data']), encoding='utf8')
         )
 
         user_args = []
-        user_args.append(event_data['11#hover'])
-        example.attr_click_point(*user_args)
+        user_args.append(event_data['9#hover'])
+        example.anom_click_point(*user_args)
 
     foo = copy_current_request_context(wrapuser)
     eventlet.spawn(foo)
@@ -174,12 +174,12 @@ def _(*args):
     foo = copy_current_request_context(wrapuser)
     eventlet.spawn(foo)
 
-@socketio.on('3#switch')
+@socketio.on('6#change')
 def _(*args):
     def wrapuser():
         uniq_events = set()
         uniq_events.update([('1#change', 'algo_select', 'get'), ('3#switch', 'normalize_switch', 'get'), ('5#change', 'neighbor_slider', 'get'), ('2#change', 'species_select', 'get'), ('6#change', 'perplex_slider', 'get')])
-        uniq_events.remove(('3#switch', 'normalize_switch', 'get'))
+        uniq_events.remove(('6#change', 'perplex_slider', 'get'))
         event_data = {}
         for ev in uniq_events:
             comp = getattr(example, ev[1])
@@ -190,7 +190,65 @@ def _(*args):
             getter = getattr(comp, ev[2])
             event_data[ev[0]] = getter()
 
-        event_data['3#switch'] = example.normalize_switch._get(
+        event_data['6#change'] = example.perplex_slider._get(
+            msgpack.unpackb(bytes(args[0]['data']), encoding='utf8')
+        )
+
+        user_args = []
+        user_args.append(event_data['1#change'])
+        user_args.append(event_data['3#switch'])
+        user_args.append(event_data['5#change'])
+        user_args.append(event_data['2#change'])
+        user_args.append(event_data['6#change'])
+        example.baseviz(*user_args)
+
+    foo = copy_current_request_context(wrapuser)
+    eventlet.spawn(foo)
+
+@socketio.on('11#hover')
+def _(*args):
+    def wrapuser():
+        uniq_events = set()
+        uniq_events.update([('11#hover', 'attrplot', 'get')])
+        uniq_events.remove(('11#hover', 'attrplot', 'get'))
+        event_data = {}
+        for ev in uniq_events:
+            comp = getattr(example, ev[1])
+            if ev[2] is None:
+                ename = ev[0]
+                raise GetterNotDefined('{ctype} has no getter associated with event "on_{ename}"'
+                                       .format(ctype=type(comp), ename=ename[ename.find('#') + 1:]))
+            getter = getattr(comp, ev[2])
+            event_data[ev[0]] = getter()
+
+        event_data['11#hover'] = example.attrplot._get(
+            msgpack.unpackb(bytes(args[0]['data']), encoding='utf8')
+        )
+
+        user_args = []
+        user_args.append(event_data['11#hover'])
+        example.attr_click_point(*user_args)
+
+    foo = copy_current_request_context(wrapuser)
+    eventlet.spawn(foo)
+
+@socketio.on('1#change')
+def _(*args):
+    def wrapuser():
+        uniq_events = set()
+        uniq_events.update([('1#change', 'algo_select', 'get'), ('3#switch', 'normalize_switch', 'get'), ('5#change', 'neighbor_slider', 'get'), ('2#change', 'species_select', 'get'), ('6#change', 'perplex_slider', 'get')])
+        uniq_events.remove(('1#change', 'algo_select', 'get'))
+        event_data = {}
+        for ev in uniq_events:
+            comp = getattr(example, ev[1])
+            if ev[2] is None:
+                ename = ev[0]
+                raise GetterNotDefined('{ctype} has no getter associated with event "on_{ename}"'
+                                       .format(ctype=type(comp), ename=ename[ename.find('#') + 1:]))
+            getter = getattr(comp, ev[2])
+            event_data[ev[0]] = getter()
+
+        event_data['1#change'] = example.algo_select._get(
             msgpack.unpackb(bytes(args[0]['data']), encoding='utf8')
         )
 
@@ -263,12 +321,12 @@ def _(*args):
     foo = copy_current_request_context(wrapuser)
     eventlet.spawn(foo)
 
-@socketio.on('9#select')
+@socketio.on('3#switch')
 def _(*args):
     def wrapuser():
         uniq_events = set()
-        uniq_events.update([('9#select', 'anomplot', 'get')])
-        uniq_events.remove(('9#select', 'anomplot', 'get'))
+        uniq_events.update([('1#change', 'algo_select', 'get'), ('3#switch', 'normalize_switch', 'get'), ('5#change', 'neighbor_slider', 'get'), ('2#change', 'species_select', 'get'), ('6#change', 'perplex_slider', 'get')])
+        uniq_events.remove(('3#switch', 'normalize_switch', 'get'))
         event_data = {}
         for ev in uniq_events:
             comp = getattr(example, ev[1])
@@ -279,13 +337,17 @@ def _(*args):
             getter = getattr(comp, ev[2])
             event_data[ev[0]] = getter()
 
-        event_data['9#select'] = example.anomplot._get(
+        event_data['3#switch'] = example.normalize_switch._get(
             msgpack.unpackb(bytes(args[0]['data']), encoding='utf8')
         )
 
         user_args = []
-        user_args.append(event_data['9#select'])
-        example.anom_select_points(*user_args)
+        user_args.append(event_data['1#change'])
+        user_args.append(event_data['3#switch'])
+        user_args.append(event_data['5#change'])
+        user_args.append(event_data['2#change'])
+        user_args.append(event_data['6#change'])
+        example.baseviz(*user_args)
 
     foo = copy_current_request_context(wrapuser)
     eventlet.spawn(foo)
@@ -313,6 +375,33 @@ def _(*args):
     foo = copy_current_request_context(wrapuser)
     eventlet.spawn(foo)
 
+@socketio.on('9#select')
+def _(*args):
+    def wrapuser():
+        uniq_events = set()
+        uniq_events.update([('9#select', 'anomplot', 'get')])
+        uniq_events.remove(('9#select', 'anomplot', 'get'))
+        event_data = {}
+        for ev in uniq_events:
+            comp = getattr(example, ev[1])
+            if ev[2] is None:
+                ename = ev[0]
+                raise GetterNotDefined('{ctype} has no getter associated with event "on_{ename}"'
+                                       .format(ctype=type(comp), ename=ename[ename.find('#') + 1:]))
+            getter = getattr(comp, ev[2])
+            event_data[ev[0]] = getter()
+
+        event_data['9#select'] = example.anomplot._get(
+            msgpack.unpackb(bytes(args[0]['data']), encoding='utf8')
+        )
+
+        user_args = []
+        user_args.append(event_data['9#select'])
+        example.anom_select_points(*user_args)
+
+    foo = copy_current_request_context(wrapuser)
+    eventlet.spawn(foo)
+
 @socketio.on('2#change')
 def _(*args):
     def wrapuser():
@@ -330,95 +419,6 @@ def _(*args):
             event_data[ev[0]] = getter()
 
         event_data['2#change'] = example.species_select._get(
-            msgpack.unpackb(bytes(args[0]['data']), encoding='utf8')
-        )
-
-        user_args = []
-        user_args.append(event_data['1#change'])
-        user_args.append(event_data['3#switch'])
-        user_args.append(event_data['5#change'])
-        user_args.append(event_data['2#change'])
-        user_args.append(event_data['6#change'])
-        example.baseviz(*user_args)
-
-    foo = copy_current_request_context(wrapuser)
-    eventlet.spawn(foo)
-
-@socketio.on('9#hover')
-def _(*args):
-    def wrapuser():
-        uniq_events = set()
-        uniq_events.update([('9#hover', 'anomplot', 'get')])
-        uniq_events.remove(('9#hover', 'anomplot', 'get'))
-        event_data = {}
-        for ev in uniq_events:
-            comp = getattr(example, ev[1])
-            if ev[2] is None:
-                ename = ev[0]
-                raise GetterNotDefined('{ctype} has no getter associated with event "on_{ename}"'
-                                       .format(ctype=type(comp), ename=ename[ename.find('#') + 1:]))
-            getter = getattr(comp, ev[2])
-            event_data[ev[0]] = getter()
-
-        event_data['9#hover'] = example.anomplot._get(
-            msgpack.unpackb(bytes(args[0]['data']), encoding='utf8')
-        )
-
-        user_args = []
-        user_args.append(event_data['9#hover'])
-        example.anom_click_point(*user_args)
-
-    foo = copy_current_request_context(wrapuser)
-    eventlet.spawn(foo)
-
-@socketio.on('1#change')
-def _(*args):
-    def wrapuser():
-        uniq_events = set()
-        uniq_events.update([('1#change', 'algo_select', 'get'), ('3#switch', 'normalize_switch', 'get'), ('5#change', 'neighbor_slider', 'get'), ('2#change', 'species_select', 'get'), ('6#change', 'perplex_slider', 'get')])
-        uniq_events.remove(('1#change', 'algo_select', 'get'))
-        event_data = {}
-        for ev in uniq_events:
-            comp = getattr(example, ev[1])
-            if ev[2] is None:
-                ename = ev[0]
-                raise GetterNotDefined('{ctype} has no getter associated with event "on_{ename}"'
-                                       .format(ctype=type(comp), ename=ename[ename.find('#') + 1:]))
-            getter = getattr(comp, ev[2])
-            event_data[ev[0]] = getter()
-
-        event_data['1#change'] = example.algo_select._get(
-            msgpack.unpackb(bytes(args[0]['data']), encoding='utf8')
-        )
-
-        user_args = []
-        user_args.append(event_data['1#change'])
-        user_args.append(event_data['3#switch'])
-        user_args.append(event_data['5#change'])
-        user_args.append(event_data['2#change'])
-        user_args.append(event_data['6#change'])
-        example.baseviz(*user_args)
-
-    foo = copy_current_request_context(wrapuser)
-    eventlet.spawn(foo)
-
-@socketio.on('6#change')
-def _(*args):
-    def wrapuser():
-        uniq_events = set()
-        uniq_events.update([('1#change', 'algo_select', 'get'), ('3#switch', 'normalize_switch', 'get'), ('5#change', 'neighbor_slider', 'get'), ('2#change', 'species_select', 'get'), ('6#change', 'perplex_slider', 'get')])
-        uniq_events.remove(('6#change', 'perplex_slider', 'get'))
-        event_data = {}
-        for ev in uniq_events:
-            comp = getattr(example, ev[1])
-            if ev[2] is None:
-                ename = ev[0]
-                raise GetterNotDefined('{ctype} has no getter associated with event "on_{ename}"'
-                                       .format(ctype=type(comp), ename=ename[ename.find('#') + 1:]))
-            getter = getattr(comp, ev[2])
-            event_data[ev[0]] = getter()
-
-        event_data['6#change'] = example.perplex_slider._get(
             msgpack.unpackb(bytes(args[0]['data']), encoding='utf8')
         )
 
