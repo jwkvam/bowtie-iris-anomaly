@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from bowtie import cache
 from bowtie.control import DropDown, Slider
 from bowtie.control import Button, Switch, Number
 
@@ -51,7 +52,7 @@ def baseviz(algo, normalize, neighbors, species, perplex):
             normalize is None or
             species is None):
         return
-    baseviz2(algo, normalize, neighbors, species, perplex, nth=None)
+    baseviz2(algo, normalize, neighbors, species, perplex)
 
 def replot():
     algo = algo_select.get()
@@ -61,13 +62,12 @@ def replot():
     perplex = perplex_slider.get()
     baseviz2(algo, normalize, neighbors, species, perplex)
 
-def baseviz2(algo, normalize, neighbors, species, perplex, nth=None):
+def baseviz2(algo, normalize, neighbors, species, perplex):
     algo = algo['label']
     attr_data = get_species_data(species, normalize)
 
     anomplot.progress.do_percent(0)
-    if nth is None:
-        anomplot.progress.do_visible(True)
+    anomplot.progress.do_visible(True)
 
 
     seed = random_seed.get()
@@ -105,13 +105,13 @@ def baseviz2(algo, normalize, neighbors, species, perplex, nth=None):
     chart.legend(False)
     chart.layout['hovermode'] = 'closest'
     anomplot.progress.do_visible(False)
+    cache.save('anomaly', chart.dict)
     anomplot.do_all(chart.dict)
 
-    if nth is None:
-        chart = attr_data.T.plotly.line(opacity=0.5)
-        chart.legend(False)
-        chart.layout['hovermode'] = 'closest'
-        attrplot.do_all(chart.dict)
+    chart = attr_data.T.plotly.line(opacity=0.5)
+    chart.legend(False)
+    chart.layout['hovermode'] = 'closest'
+    attrplot.do_all(chart.dict)
 
 
 def anom_click_point(point):
@@ -145,8 +145,14 @@ def attr_click_point(point):
     normalize = normalize_switch.get()
     species = species_select.get()
     perplex = perplex_slider.get()
+    data = cache.load('anomaly')
 
-    baseviz2(algo, normalize, neighbors, species, perplex, nth=nth)
+    chart = pw.Chart(data=data['data'], layout=data['layout'])
+
+    chart.data[nth]['line']['color'] = 'red'
+    chart.data[nth]['opacity'] = 1
+
+    anomplot.do_all(chart.dict)
 
 
 def attr_select_points(points):
