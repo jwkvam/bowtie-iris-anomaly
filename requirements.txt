@@ -1,4 +1,4 @@
-bowtie>=0.2.0
+bowtie>=0.2.4
 plotlywrapper
 gunicorn
 enum34
